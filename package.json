@@ -1,0 +1,21 @@
+{
+  "name": "node-rest-api",
+  "version": "1.0.0",
+  "description": "rest api for all devices",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "rest",
+    "bipin"
+  ],
+  "author": "Bipin Swarnkar",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.14",
+    "morgan": "^1.7.0"
+  }
+}

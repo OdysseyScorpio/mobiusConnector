@@ -1,0 +1,43 @@
+<html ng-app="myApp">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container" ng-controller="eventController">
+<div align="center">
+<h3>Add New event</h3>
+<form name="add_form" ng-submit="add(event)" novalidate>
+<input class="form-control" type="text" required="required" ng-model="event.name">
+<input class="btn btn-info" type="submit" ng-disabled="!add_form.$valid" ng-if="!event._id">
+ <div class="btn-group">
+              <button class="btn btn-info" ng-click="update(event)" ng-if="event._id" type="submit">Update</button>
+              <button class="btn" ng-click="deselect()" ng-if="event._id">Clear</button>
+            </div>
+</form>
+</div>
+ <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="event in events">
+      <td>{{event.name}}</td>
+      <td><button class="btn btn-warning" ng-click="edit(event._id)">Edit</button></td>
+      <td><button class="btn btn-danger" ng-click="remove(event)">Remove</button></td>
+      </tr>
+      </tbody>
+      
+      </table>
+</div>
+
+<script src="js/angular.min.js"></script>
+<script src="js/angular-resource.min.js"></script>
+<script src="app/app.js"></script>
+<script src="app/events.js"></script>
+</body>
+</html>
