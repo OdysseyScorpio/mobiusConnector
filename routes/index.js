@@ -62,7 +62,7 @@ router.get('/news',function(req,res){
 
 	//dbo.collection('news').findOne({timestamp:{$exists:true}}},{update:1,_id:0}).sort({timestamp:-1}),function(err,items) {
 	//dbo.collection('news').findOne({timestamp:{$exists:true}},{update:1,_id:0},function(err,items) {
-//	 dbo.collection('news').findOne({timestamp:{$exists:true}},{update:1,_id:0},function(err,items) {
+	 dbo.collection('news').findOne({timestamp:{$exists:true}},{update:1,_id:0},function(err,items) {
 
         console.log("Done");
         if (err) throw err;
