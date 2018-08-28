@@ -4,7 +4,14 @@ var bodyParser = require('body-parser');
 var logger = require('morgan');
 
 
-var app = express();
+//var app = express();
+
+var express = require('express')
+  , http = require('http')
+  , app = express()
+  , server = http.createServer(app)
+
+
 var routes = require('./routes/index');
 
 //Connecting database
@@ -19,7 +26,8 @@ app.use(bodyParser.urlencoded({ extended:true }));
 
 app.use(express.static(__dirname+'/public'));
 
-var port = process.env.PORT || 3000;
+
+var port = process.env.PORT || 3000 ;
 
 //ROUTES FOR OUR API
 //=============================================================================
@@ -42,5 +50,15 @@ app.use(function(req, res, next) {
 
 //START THE SERVER
 //=============================================================================
-app.listen(port);
+//app.listen(port,'192.186.1.125');
+
+
+server.listen(3000,'mobius',function(){
+ server.close(function(){
+   server.listen(3000,'0.0.0.0')
+ })
+})
+
+
+
 console.log('app listening at '+port);

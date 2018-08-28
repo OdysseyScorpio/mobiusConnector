@@ -18,41 +18,63 @@ router.get('/',function(req,res){
 
 router.post('/events',function(req,res){
 	var newEvent = new Event();//create a new instance of the event model
-	newEvent.name = req.body.name.replace("'","");
+	newEvent.name = req.body;
 
-
-MongoClient.connect('mongodb://127.0.0.1:27017/events', function(err,db) {
-
+MongoClient.connect('mongodb://127.0.0.1/events', function(err,db) {
+console.log("Connecting to DB")
     if (err) throw err;
-    console.log("Connected to Database");
-       var document = JSON.parse(req.body.name);
- console.log(document.timestamp)
-console.log(document)
+console.log("Connected to Database");
+       var document = req.body;
+
 var dbo=db.db("events")
     // insert record
         dbo.collection('events').insert(document, function(err, records) {
-console.log("records")
- console.log(records.ops._id)
-console.log("ERRRRRRRRRRRRRRR")
-console.log(err)
 
 
         if (err) throw err;
-        console.log("Record added as " + records.ops._id);
+        console.log("Record added as " + records.insertedIds);
+	res.json({message:'Event added successfully'});	
 	db.close();
     });
 });
-
-//    //save the event and check for error
-//	newEvent.save(function(err){
-//		if(err)
-//			res.send(err);
-//		
-//		res.json({message:'Event added successfully'});
-//		console.log(req.body.name);
-//	});
-	
 });
+
+
+
+router.get('/news',function(req,res){
+
+        MongoClient.connect('mongodb://127.0.0.1/events', function(err,db) {
+        var dbo=db.db("events")
+        console.log("Start");
+	
+
+//	dbo.collection('news').find({},{_id:0,update:1},{sort:'-timestamp'}).limit(1,function(err,items){
+//	console.log(items)
+//	console.log("here")
+//	console.log(err)
+//	})
+
+
+
+        console.log("Start");
+	//db.news.find({},{_id:0,update:1}).sort({timestamp:-1}).pretty()
+	//dbo.collection('news').find   ({timestamp:{$exists:true}},{_id:0,update:1},{sort:{timestamp:-1}}).limit(2,function(err,items){
+
+	//dbo.collection('news').findOne({timestamp:{$exists:true}}},{update:1,_id:0}).sort({timestamp:-1}),function(err,items) {
+	//dbo.collection('news').findOne({timestamp:{$exists:true}},{update:1,_id:0},function(err,items) {
+//	 dbo.collection('news').findOne({timestamp:{$exists:true}},{update:1,_id:0},function(err,items) {
+
+        console.log("Done");
+        if (err) throw err;
+        console.log(items);
+        res.json({items});
+     });
+  });
+
+});
+
+
+
 
 router.get('/events',function(req,res){
 	Event.find(function(err,events){
