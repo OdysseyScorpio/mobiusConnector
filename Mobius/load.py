@@ -25,11 +25,13 @@ def plugin_start(plugin_dir):
     :return: Plug-in name
     """
     # sys.stderr.write("plugin_start\n")    # appears in %TMP%/EDMarketConnector.log in packaged Windows app
-
+    
+    check_version()
     #return 'Mobius Helper'
     return 'Mobius'
-    
-
+def check_version():
+    response = requests.get("http://mobius:3000/api/version", timeout=0.5)
+    tkMessageBox.showinfo("Upgrade status", json.loads(response.content).get("version"))
 
 def upgrade_callback():
     # sys.stderr.write("You pushed the upgrade button\n")
@@ -51,22 +53,20 @@ def upgrade_callback():
 
             # Check our required version number is in the response, otherwise
             # it's probably not our file and should not be trusted
-            expected_version_substr="MH_VERSION=\"{REMOTE_VER}\"".format(REMOTE_VER=this.remote_version)
-            if expected_version_substr in response.text:
-                with open(corrected_fullpath, "wb") as f:
-                    f.seek(0)
-                    f.write(response.content)
-                    f.truncate()
-                    f.flush()
-                    os.fsync(f.fileno())
-                    this.upgrade_applied = True # Latch on upgrade successful
-                    msginfo = ['Upgrade has completed sucessfully.', 'Please close and restart EDMC']
-                    tkMessageBox.showinfo("Upgrade status", "\n".join(msginfo))
-
-                sys.stderr.write("Finished plugin upgrade!\n")
-            else:
-                msginfo = ['Upgrade failed. Did not contain the correct version', 'Please try again']
+            
+            
+            with open(corrected_fullpath, "wb") as f:
+                f.seek(0)
+                f.write(response.content)
+                f.truncate()
+                f.flush()
+                os.fsync(f.fileno())
+                this.upgrade_applied = True # Latch on upgrade successful
+                msginfo = ['Upgrade has completed sucessfully.', 'Please close and restart EDMC']
                 tkMessageBox.showinfo("Upgrade status", "\n".join(msginfo))
+
+            sys.stderr.write("Finished plugin upgrade!\n")
+            
         else:
             msginfo = ['Upgrade failed. Bad server response', 'Please try again']
             tkMessageBox.showinfo("Upgrade status", "\n".join(msginfo))
