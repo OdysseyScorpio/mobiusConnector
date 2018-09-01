@@ -45,15 +45,24 @@ router.get('/news',function(req,res){
 });
 
 router.get('/version',function(req,res){
-
+ 	
     MongoClient.connect('mongodb://127.0.0.1/events', function(err,db) {
-    	var dbo=db.db("version")
-    	dbo.collection('version').findOne({timestamp:{$exists:true}},{version:1,_id:0},function(err,items) {
+    	var dbo=db.db("events")
+    	dbo.collection('pluginversion').findOne(function(err,items) {
+			console.log(err)
+			console.log(items)
+			console.log(items.version)
 			if (err) throw err;
-			version =items[0].version
+			version =items.version
     		res.json({version});
 		});
 	});
+});
+
+router.get('/download',function(req,res){
+	var path = require('path');
+	console.log(__dirname)
+	res.sendFile(path.resolve('./Mobius/load.py'));
 });
 
 
