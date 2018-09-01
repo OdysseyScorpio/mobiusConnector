@@ -62,12 +62,13 @@ router.get('/news',function(req,res){
 
 	//dbo.collection('news').findOne({timestamp:{$exists:true}}},{update:1,_id:0}).sort({timestamp:-1}),function(err,items) {
 	//dbo.collection('news').findOne({timestamp:{$exists:true}},{update:1,_id:0},function(err,items) {
-	 dbo.collection('news').findOne({timestamp:{$exists:true}},{update:1,_id:0},function(err,items) {
+	  dbo.collection('news').find({timestamp:{$exists:true}},{update:1,_id:0}).toArray(function(err,items) {
+	
 
-        console.log("Done");
+console.log(items)
         if (err) throw err;
-        console.log(items);
-        res.json({items});
+	update =items[items.length-1]
+        res.json({update});
      });
   });
 
