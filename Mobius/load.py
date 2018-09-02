@@ -14,43 +14,58 @@ import webbrowser
 
 this = sys.modules[__name__]
 this.msg = ""
+this.apiURL = "http://mobius.myddns.me:3000/api"
 
-
-MH_VERSION="0.0.0"
+MH_VERSION="0.0.1a"
 
 
 def plugin_start(plugin_dir):
-    """
-    Invoked when EDMC has just loaded the plug-in
-    :return: Plug-in name
-    """
-    # sys.stderr.write("plugin_start\n")    # appears in %TMP%/EDMarketConnector.log in packaged Windows app
+    
+    
     
     check_version()
-    #return 'Mobius Helper'
     return 'Mobius'
+
+def plugin_prefs(parent):
+    """
+    Invoked whenever a user opens the preferences pane
+    Must return a TK Frame for adding to the EDMC settings dialog.
+    """
+    
+    PADX = 10 # formatting
+
+    frame = nb.Frame(parent)
+    frame.columnconfigure(1, weight=1)
+
+    HyperlinkLabel(frame, text='Mobius PVE website', background=nb.Label().cget('background'), url='https://elitepve.com/', underline=True).grid(columnspan=2, padx=PADX, sticky=tk.W)  # Don't translate
+    nb.Label(frame, text="Mobius Plug-in - pre-alpha release Version {VER}".format(VER=MH_VERSION)).grid(columnspan=2, padx=PADX, sticky=tk.W)
+    nb.Label(frame).grid()  # spacer
+    nb.Button(frame, text="UPGRADE", command=upgrade_callback).grid(columnspan=2, padx=PADX, sticky=tk.W)
+    return frame
+
+
+
 def check_version():
-    response = requests.get("http://mobius:3000/api/version", timeout=0.5)
-    tkMessageBox.showinfo("Upgrade status", json.loads(response.content).get("version"))
+    response = requests.get(this.apiURL + "/version")
+    version = json.loads(response.content).get("version")
+    if version != MH_VERSION:
+        upgrade_callback()
+      
 
 def upgrade_callback():
     # sys.stderr.write("You pushed the upgrade button\n")
-
+    
     # Catch upgrade already done once
-    if this.upgrade_applied:
-        msginfo = ['Upgrade already applied', 'Please close and restart EDMC']
-        tkMessageBox.showinfo("Upgrade status", "\n".join(msginfo))
-        return
-
+    
+    
     this_fullpath = os.path.realpath(__file__)
     this_filepath,this_extension = os.path.splitext(this_fullpath)
     corrected_fullpath = this_filepath + ".py" # Somehow we might need this to stop it hitting the pyo file?
 
     # sys.stderr.write("path is %s\n" % this_filepath)
     try:
-        response = requests.get(REMOTE_PLUGIN_FILE_URL)
+        response = requests.get(this.apiURL + "/download")
         if (response.status_code == 200):
-
             # Check our required version number is in the response, otherwise
             # it's probably not our file and should not be trusted
             
@@ -76,6 +91,7 @@ def upgrade_callback():
         tkMessageBox.showinfo("Upgrade status", "\n".join(msginfo))
 
 
+
 def plugin_status_text():
     if this.upgrade_required is None:
         return "Mobius Helper {VER} OK (upgrade status unknown)".format(VER=MH_VERSION)
@@ -97,7 +113,7 @@ def news_update():
 
     try:
 
-        response = requests.get("http://81.152.10.79:3000/api/news")
+        response = requests.get(this.apiURL + "/news")
                 
         updatemsg = json.loads(response.content).get("update").get("update")
              
@@ -117,7 +133,7 @@ def plugin_app(parent):
    this.frame = tk.Frame(parent)
    this.inside_frame = tk.Frame(this.frame)
    this.inside_frame.columnconfigure(4, weight=1)
-   label_string = "Pre-alpha release not for general use."
+   label_string = "Pre-alpha release version:" +MH_VERSION + " not for general use."
    
 
    this.frame.columnconfigure(2, weight=1)
@@ -158,10 +174,13 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
 
 
     if entry['event'] == 'FSDJump':
-        url_jump = 'http://81.152.10.79:3000/api/events'
+        url_jump = this.apiURL + '/events'
         headers = {'content-type': 'application/json'}
         response = requests.post(url_jump, data=transmit_json, headers=headers, timeout=7)
-    
+    elif (entry['event'] == 'MissionAccepted' or entry['event'] =='MissionCompleted' ) and (entry['Faction'] == 'MOBIUS COLONIAL REPUBLIC NAVY' or entry['Faction'] == "The Order of Mobius"):
+        url_jump = this.apiURL + '/events'
+        headers = {'content-type': 'application/json'}
+        response = requests.post(url_jump, data=transmit_json, headers=headers, timeout=7)
 
         
     
@@ -172,4 +191,6 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
 def plugin_stop():
     print "Farewell cruel world!"
     
+
+
 
