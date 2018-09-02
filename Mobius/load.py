@@ -15,7 +15,6 @@ import webbrowser
 this = sys.modules[__name__]
 this.msg = ""
 this.apiURL = "http://vps583405.ovh.net:3000/api"
-
 MH_VERSION="0.0.1b"
 
 
