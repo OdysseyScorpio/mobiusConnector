@@ -18,7 +18,6 @@ this.apiURL = "http://vps583405.ovh.net:3000/api"
 
 MH_VERSION="0.0.1c"
 
-
 def plugin_start(plugin_dir):
     
     
