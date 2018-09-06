@@ -16,7 +16,7 @@ this = sys.modules[__name__]
 this.msg = ""
 this.apiURL = "http://vps583405.ovh.net:3000/api"
 
-MH_VERSION="0.0.1c"
+MH_VERSION="0.0.1d0"
 
 def plugin_start(plugin_dir):
     
@@ -107,11 +107,10 @@ def OpenUrl(UrlToOpen):
     webbrowser.open_new(UrlToOpen)
 
 def cmdr_data(data, is_beta):
-	"""
-	We have new data on our commander
-	"""
-	this.cmdr = data.get('commander').get('name')
-	sys.stderr.write(json.dumps(data))
+    """
+    We have new data on our commander
+    """
+    this.cmdr = data.get('commander').get('name')
 
 def news_update():
 
@@ -132,46 +131,35 @@ def news_update():
     except:
         this.news_headline['text'] = "Could not update news from Mobius server"
 
-def callback():
-        url_jump = this.apiURL + '/influence'
-        headers = {'content-type': 'application/json'}
-        transmit_json = {'commander' : this.cmdr ,'INF' : this.Influence.get() , 'Count' : this.Counter.get() }
-        sys.stderr.write(transmit_json['INF'])
-        sys.stderr.write(transmit_json['commander'])
-        sys.stderr.write(transmit_json['Count'])
-        tkMessageBox.showinfo("Upgrade status", json.dumps(transmit_json))
-        response = requests.post(url_jump, data=transmit_json, headers=headers, timeout=7)
-
 def plugin_app(parent):
 
-	this.parent = parent
-	this.frame = tk.Frame(parent)
-	this.inside_frame = tk.Frame(this.frame)
-	this.inside_frame.columnconfigure(4, weight=1)
-	label_string = "Pre-alpha release version:" + MH_VERSION + " not for general use."
+    this.parent = parent
+    this.frame = tk.Frame(parent)
+    this.inside_frame = tk.Frame(this.frame)
+    this.inside_frame.columnconfigure(4, weight=1)
+    label_string = "Pre-alpha release version:" + MH_VERSION + " not for general use."
 
 
-	this.frame.columnconfigure(2, weight=1)
-	this.label = HyperlinkLabel(this.frame, text='Mobius:', url='https://elitepve.com/', underline=False)
+    this.frame.columnconfigure(2, weight=1)
+    this.label = HyperlinkLabel(this.frame, text='Mobius:', url='https://elitepve.com/', underline=False)
 
-	this.status = tk.Label(this.frame, anchor=tk.W, text=label_string , wraplengt=200)
-	this.news_label = tk.Label(this.frame, anchor=tk.W, text="News:")
-	this.news_headline = HyperlinkLabel(this.frame, text="" , wraplengt=200, url="", underline=True)
-	  
-	this.spacer = tk.Label(this.frame)
-	this.label.grid(row = 0, column = 0, sticky=tk.W)
-	this.status.grid(row = 0, column = 1, sticky=tk.W)
-	this.news_label.grid(row = 1, column = 0, sticky=tk.W)
-	this.news_headline.grid(row = 1, column = 1, sticky="ew")
+    this.status = tk.Label(this.frame, anchor=tk.W, text=label_string , wraplengt=200)
+    this.news_label = tk.Label(this.frame, anchor=tk.W, text="News:")
+    this.news_headline = HyperlinkLabel(this.frame, text="" , wraplengt=200, url="", underline=True)
+      
+    this.spacer = tk.Label(this.frame)
+    this.label.grid(row = 0, column = 0, sticky=tk.W)
+    this.status.grid(row = 0, column = 1, sticky=tk.W)
+    this.news_label.grid(row = 1, column = 0, sticky=tk.W)
+    this.news_headline.grid(row = 1, column = 1, sticky="ew")
 
 
-	
+    
 
-	news_update()
-   	return this.frame
+    news_update()
+    return this.frame
 def dashboard_entry(cmdr, is_beta, entry):
-	this.cmdr = cmdr
-	sys.stderr.write(json.dumps(entry))
+    this.cmdr = cmdr
 
 def journal_entry(cmdr, is_beta, system, station, entry, state):
     """
@@ -183,28 +171,27 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
     :param state: A dictionary containing info about the Cmdr, current ship and cargo
     :return:
     """
-try:    
-	this.cmdr = cmdr 
-	entry['commandername'] = cmdr
-	entry['stationname'] = station
-	entry['systemname'] = system
-	entry['Mobiusappversion'] = MH_VERSION
+    
+    this.cmdr = cmdr 
+    entry['commandername'] = cmdr
+    entry['Mobiusappversion'] = MH_VERSION
 
-	compress_json = json.dumps(entry)
-	#transmit_json = zlib.compress(compress_json)
-	transmit_json = json.dumps(entry)
+    transmit_json = json.dumps(entry)
 
 
-	if entry['event'] == 'FSDJump':
-	    url_jump = this.apiURL + '/events'
-	    headers = {'content-type': 'application/json'}
-	    response = requests.post(url_jump, data=transmit_json, headers=headers, timeout=7)
-	elif entry['event'] == 'MissionAccepted' or entry['event'] =='MissionCompleted':
-	    url_jump = this.apiURL + '/events'
-	    headers = {'content-type': 'application/json'}
-	    response = requests.post(url_jump, data=transmit_json, headers=headers, timeout=7)
-except:
-    sys.stderr.write("No Commander details, waiting.")	
+    if entry['event'] == 'FSDJump':
+        url_jump = this.apiURL + '/events'
+        headers = {'content-type': 'application/json'}
+        response = requests.post(url_jump, data=transmit_json, headers=headers, timeout=7)
+    elif entry['event'] == 'MissionAccepted' or entry['event'] =='MissionCompleted':
+        url_jump = this.apiURL + '/events'
+        headers = {'content-type': 'application/json'}
+        response = requests.post(url_jump, data=transmit_json, headers=headers, timeout=7)
+    elif entry['event'] == 'SellExplorationData':
+        url_jump = this.apiURL + '/events'
+        headers = {'content-type': 'application/json'}
+        response = requests.post(url_jump, data=transmit_json, headers=headers, timeout=7)
+  
     
     
 
@@ -214,6 +201,7 @@ except:
 def plugin_stop():
     print "Farewell cruel world!"
     
+
 
 
 
