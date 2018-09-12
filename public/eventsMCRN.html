@@ -4,9 +4,9 @@
 <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container"  style="margin-left:10px">
+<div class="container" ng-controller="eventMCRNController"  style="margin-left:10px">
 <div align="center" >
-<h3>View OOM Completed Missions Overview</h3>
+<h3>View MCRN Completed Missions Overview</h3>
 
  <table class="table">
       <thead>
@@ -38,7 +38,7 @@
         </tr>
       </thead>
       <tbody>
-<dv class="container" ng-app="myApp" ng-controller="eventMCRNController">
+<div class="container">
 	<tr ng-repeat="mission in eventsMCRN">
 
 <td>{{mission.OriginalSystem}}</td>
