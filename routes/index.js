@@ -118,6 +118,83 @@ if(completed[c]['Mobiusappversion']!==undefined){completed[c]['Mobiusappversion'
 
 
 
+router.get('/eventsMCRN',function(req,res){
+
+    MongoClient.connect('mongodb://127.0.0.1/events', function(err,db) {
+        var dbo=db.db("events")
+        Promise.all([
+        dbo.collection('events').find({event:"MissionCompleted","Faction" : "MOBIUS COLONIAL REPUBLIC NAVY"},
+        {systemname:1,stationname:1,Commodity:1,Commodity_Localised:1,Count:1,DestinationStation:1,DestinationSystem:1,Donation:1,LocalisedName:1,PassengerCount:1,
+        PassengerVIPs:1,PassengerWanted:1,PassenterType:1,Reward:1,Influence:1,commandername:1,MissionID:1,timestamp:1,Wing:1,Mobiusappversion :1,_id:0}).toArray(),
+        dbo.collection('events').find({event:"MissionAccepted"},
+        {systemname:1,stationname:1,Commodity:1,Commodity_Localised:1,Count:1,DestinationStation:1,DestinationSystem:1,Donation:1,LocalisedName:1,PassengerCount:1,
+        PassengerVIPs:1,PassengerWanted:1,PassenterType:1,Reward:1,Influence:1,commandername:1,MissionID:1,timestamp:1,Wing:1,Mobiusappversion :1,_id:0}).toArray()
+        ]).then( ([completed,accepted ]) => {
+
+
+                for ( var c = 0 ; c < completed.length; c++) {
+                        for (var a = 0 ; a < accepted.length; a++) {
+                                if(completed[c]["MissionID"] == accepted[a]["MissionID"]){
+
+
+completed[c]['OriginalSystem'] = accepted[a]['systemname']
+completed[c]['OriginalStation'] = accepted[a]['stationname']
+completed[c]['Commodity'] = accepted[a]['Commodity']
+completed[c]['Commodity_Localised'] = accepted[a]['Commodity_Localised']
+completed[c]['Count'] = accepted[a]['Count']
+completed[c]['DestinationStation'] = accepted[a]['DestinationStation']
+completed[c]['DestinationSystem'] = accepted[a]['DestinationSystem']
+completed[c]['Donation'] = completed[c]['Donation']
+completed[c]['LocalisedName'] = accepted[a]['LocalisedName']
+completed[c]['PassengerCount'] = accepted[a]['PassengerCount']
+completed[c]['PassengerVIPs'] = accepted[a]['PassengerVIPs']
+completed[c]['PassengerWanted'] = accepted[a]['PassengerWanted']
+completed[c]['PassenterType'] = accepted[a]['PassenterType']
+completed[c]['Reward'] = completed[c]['Reward']
+completed[c]['Influence'] = accepted[a]['Influence']
+completed[c]['commandername'] = accepted[a]['commandername']
+completed[c]['MissionID'] = accepted[a]['MissionID']
+completed[c]['StartTimestamp'] = accepted[a]['timestamp']
+completed[c]['EndTimestamp'] = completed[c]['timestamp']
+completed[c]['Wing'] = accepted[a]['Wing']
+completed[c]['Mobiusappversion'] = completed[c]['Mobiusappversion']
+
+
+if(completed[c]['systemname']!==undefined){completed[c]['OriginalSystem'] = accepted[a]['systemname']}else{completed[c]['systemname']=''}
+if(completed[c]['stationname']!==undefined){completed[c]['OriginalStation'] = accepted[a]['stationname']}else{completed[c]['stationname']=''}
+if(completed[c]['Commodity']!==undefined){completed[c]['Commodity'] = accepted[a]['Commodity']}else{completed[c]['Commodity']=''}
+if(completed[c]['Commodity_Localised']!==undefined){completed[c]['Commodity_Localised'] = accepted[a]['Commodity_Localised']}else{completed[c]['Commodity_Localised']=''}
+if(completed[c]['Count']!==undefined){completed[c]['Count'] = accepted[a]['Count']}else{completed[c]['Count']=''}
+if(completed[c]['DestinationStation']!==undefined){completed[c]['DestinationStation'] = accepted[a]['DestinationStation']}else{completed[c]['DestinationStation']=''}
+if(completed[c]['DestinationSystem']!==undefined){completed[c]['DestinationSystem'] = accepted[a]['DestinationSystem']}else{completed[c]['DestinationSystem']=''}
+if(completed[c]['Donation']!==undefined){completed[c]['Donation'] = completed[c]['Donation']}else{completed[c]['Donation']=''}
+if(completed[c]['LocalisedName']!==undefined){completed[c]['LocalisedName'] = accepted[a]['LocalisedName']}else{completed[c]['LocalisedName']=''}
+if(completed[c]['PassengerCount']!==undefined){completed[c]['PassengerCount'] = accepted[a]['PassengerCount']}else{completed[c]['PassengerCount']=''}
+if(completed[c]['PassengerVIPs']!==undefined){completed[c]['PassengerVIPs'] = accepted[a]['PassengerVIPs']}else{completed[c]['PassengerVIPs']=''}
+if(completed[c]['PassengerWanted']!==undefined){completed[c]['PassengerWanted'] = accepted[a]['PassengerWanted']}else{completed[c]['PassengerWanted']=''}
+if(completed[c]['PassenterType']!==undefined){completed[c]['PassenterType'] = accepted[a]['PassenterType']}else{completed[c]['PassenterType']=''}
+if(completed[c]['Reward']!==undefined){completed[c]['Reward'] = completed[c]['Reward']}else{completed[c]['Reward']=''}
+if(completed[c]['Influence']!==undefined){completed[c]['Influence'] = accepted[a]['Influence']}else{completed[c]['Influence']=''}
+if(completed[c]['commandername']!==undefined){completed[c]['commandername'] = accepted[a]['commandername']}else{completed[c]['commandername']=''}
+if(completed[c]['MissionID']!==undefined){completed[c]['MissionID'] = accepted[a]['MissionID']}else{completed[c]['MissionID']=''}
+if(completed[c]['timestamp']!==undefined){completed[c]['StartTimestamp'] = accepted[a]['timestamp']}else{completed[c]['timestamp']=''}
+if(completed[c]['timestamp']!==undefined){completed[c]['EndTimestamp'] = completed[c]['timestamp']}else{completed[c]['timestamp']=''}
+if(completed[c]['Wing']!==undefined){completed[c]['Wing'] = accepted[a]['Wing']}else{completed[c]['Wing']=''}
+if(completed[c]['Mobiusappversion']!==undefined){completed[c]['Mobiusappversion'] = completed[c]['Mobiusappversion']}else{completed[c]['Mobiusappversion']=''}
+
+
+
+                    
+
+                               }
+
+                        }
+                }
+                res.json(completed)
+           });
+    });
+});
+
 
 
 router.get('/news',function(req,res){
