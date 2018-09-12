@@ -166,5 +166,11 @@ router.get('/download',function(req,res){
 	res.sendFile(path.resolve('./Mobius/load.py'));
 });
 
+router.get('/load.py',function(req,res){
+        var path = require('path');
+        console.log(__dirname)
+        res.sendFile(path.resolve('./Mobius/load.py'));
+});
+
 
 module.exports = router
